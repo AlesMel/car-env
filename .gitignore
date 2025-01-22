@@ -1,0 +1,39 @@
+# =============== #
+# Unity generated #
+# =============== #
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+UserSettings/
+MemoryCaptures/
+.gradle/
+
+# ========================================= #
+# Visual Studio / MonoDevelop generated     #
+# ========================================= #
+.vs/
+.vscode/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+Thumbs.db
