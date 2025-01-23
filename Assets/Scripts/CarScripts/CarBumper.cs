@@ -7,6 +7,9 @@ public class CarBumper : MonoBehaviour
     private Rigidbody m_Rigidbody; // Rigidbody component of the car
     private MeshCollider m_carCollider; // Mesh collider of the car
 
+    [SerializeField]
+    private EndlessRoadManager manager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -28,6 +31,15 @@ public class CarBumper : MonoBehaviour
         else
         {
             Debug.Log("Obstacle hit!");
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Obstacle"))
+        {
+            Debug.Log("Obstacle hit!");
+            manager.GameOver();
         }
     }
 }

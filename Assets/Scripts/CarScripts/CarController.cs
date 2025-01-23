@@ -59,7 +59,7 @@ public class CarController : MonoBehaviour
 
     [Header("Drive Type")]
     public DriveType driveType = DriveType.FWD;
-
+    public bool canReverse = false;
 
     void Start()
     {
@@ -82,13 +82,29 @@ public class CarController : MonoBehaviour
     {
         horizontalInput = steering;
         verticalInput = acceleration;
-        isBreaking = Input.GetKey(KeyCode.Space);
+        if (!canReverse) {
+            isBreaking = verticalInput < 0;
+        } else {
+            isBreaking = verticalInput < 0 && Vector3.Dot(rb.linearVelocity, transform.forward) > 0;
+        }
     }
 
     private void HandleMotor()
     {
-        frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
-        frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+        // if (rb.linearVelocity.magnitude * 3.6f > maxSpeed)
+        // {
+        //     verticalInput = 0;
+        // }
+        if (Vector3.Dot(rb.linearVelocity, transform.forward) < maxSpeed / 3.6f)
+        {
+            currentMotorTorque = verticalInput * motorForce;
+        } 
+        else 
+        {
+            currentMotorTorque = 0;
+        }
+        frontLeftWheelCollider.motorTorque = currentMotorTorque;
+        frontRightWheelCollider.motorTorque = currentMotorTorque;
     }   
 
     private void HandleSteering()

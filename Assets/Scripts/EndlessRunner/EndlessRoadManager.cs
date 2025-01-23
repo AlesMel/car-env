@@ -16,10 +16,12 @@ public class EndlessRoadManager : MonoBehaviour
 
     [Header("Obstacles")]
     public GameObject[] obstacles;
+    public GameObject endGate;
     [Range(10f, 100f)]
     public float spawnInterval = 30f; // Distance between obstacle spawns
     private float originalInterval;
     public bool progressiveSpawn = true; // Increase spawn interval over time
+
 
     [Header("Collectibles Settings")]
     public GameObject[] collectibles;
@@ -41,15 +43,16 @@ public class EndlessRoadManager : MonoBehaviour
     private float lastSpawnZ; // Tracks the last Z position for spawning    
     private Queue<GameObject> activeObstacles = new Queue<GameObject>();
 
-
     void Start()
     {
+        Vector3 roadPrefabBounds = roadPrefabs[0].GetComponent<MeshRenderer>().bounds.size;
+        segmentLength = roadPrefabBounds.z;
+
         nextSpawnPosition = Vector3.zero;
+        nextSpawnPosition.z -= segmentLength;
         for (int i = 0; i < numberOfSegments; i++)
             SpawnSegment();
 
-        Vector3 roadPrefabBounds = roadPrefabs[0].GetComponent<MeshRenderer>().bounds.size;
-        segmentLength = roadPrefabBounds.z;
 
         roadWidth = (roadPrefabBounds.x - 2 * curbSizeX) / 2;
         leftLaneX  = -roadWidth + roadWidth / 2;
@@ -84,7 +87,7 @@ public class EndlessRoadManager : MonoBehaviour
 
     private void SpawnObstaclePool()
     {
-        float startZ = player.position.z + 30f;
+        float startZ = player.position.z + 50f;
         float currentZ = startZ;
         for (int i = 0; i < numberOfObstacles; i++)
         {
@@ -150,13 +153,14 @@ public class EndlessRoadManager : MonoBehaviour
 
         GameObject oldestObstacle = activeObstacles.Peek();
 
-        if (player.position.z > oldestObstacle.transform.position.z + 10f) 
+        if (player.position.z > oldestObstacle.transform.position.z + 30f) 
         {
             spawnInterval = CaculateProgressiveSpawnInterval();
             activeObstacles.Dequeue();
             float newZ = GetFarthestObstacleZ() + spawnInterval; 
 
             float laneX = Random.Range(0, 2) == 0 ? leftLaneX : rightLaneX;
+
             oldestObstacle.transform.position = new Vector3(laneX, 0, newZ);
 
             activeObstacles.Enqueue(oldestObstacle);
@@ -219,14 +223,11 @@ public class EndlessRoadManager : MonoBehaviour
     
     void SpawnSegment()
     {
-        while(true)
+        do
         {
             rand_ind = Random.Range(0, roadPrefabs.Length);
-            if (rand_ind != spawned_index)
-            {
-                break;
-            }
-        }
+        } while (rand_ind == spawned_index);
+        
         spawned_index = rand_ind;
 
         GameObject newSegment = Instantiate(roadPrefabs[rand_ind], nextSpawnPosition, Quaternion.identity);
@@ -242,7 +243,16 @@ public class EndlessRoadManager : MonoBehaviour
         if (activeSegments.Count > numberOfSegments)
         {
             GameObject oldSegment = activeSegments.Dequeue();
+            Vector3 oldSegmentPosition = oldSegment.transform.position;
+
+            endGate.transform.position = new Vector3(0, 0, oldSegmentPosition.z + 10f);
+
             Destroy(oldSegment);
         }
+    }
+
+    public void GameOver()
+    {
+        Debug.Log("Game Over!");
     }
 }

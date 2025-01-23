@@ -19,8 +19,10 @@ public class CameraFollower : MonoBehaviour
     private float reverseThreshold = 0.25f; // Time threshold to switch the camera when reversing
     
     private Rigidbody targetRigidbody; // Reference to the target's rigidbody
+    [Header("Reverse Settings")]
     [SerializeField] private float reverseSpeedThreshold = -0.5f; // Speed threshold to determine reverse movement
-
+    [SerializeField] private bool shouldReverse = false; // Whether the camera should reverse
+    
     private enum ZoomMode
     {
         Lowest,
@@ -83,7 +85,7 @@ public class CameraFollower : MonoBehaviour
         // Adjust offset based on zoom level and reversing state
         Vector3 zoomedOffset = initialOffset.normalized * currentZoom;
 
-        if (isReversing)
+        if (isReversing && shouldReverse)
         {
             // Flip the offset to look behind while maintaining the initial rotation angle
             Vector3 flippedOffset = new Vector3(-initialOffset.x, initialOffset.y, -initialOffset.z);
@@ -91,7 +93,7 @@ public class CameraFollower : MonoBehaviour
         }
 
         Vector3 targetPosition = m_FollowTarget.position + m_FollowTarget.rotation * zoomedOffset;
-        Quaternion targetRotation = isReversing
+        Quaternion targetRotation = isReversing && shouldReverse
             ? Quaternion.LookRotation(-m_FollowTarget.forward, Vector3.up) * initialCameraRotation
             : m_FollowTarget.rotation * initialCameraRotation;
 

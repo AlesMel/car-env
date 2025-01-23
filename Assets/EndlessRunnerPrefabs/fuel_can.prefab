@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: fuel_can
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0495ad18589ceba4c97647f1c6dc6392, type: 3}
+      propertyPath: m_TagString
+      value: Collectible
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -114,4 +118,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
-  scoreText: {fileID: 0}
