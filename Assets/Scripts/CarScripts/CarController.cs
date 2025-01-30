@@ -10,8 +10,6 @@ public class CarController : MonoBehaviour
     public float steeringSpeed = 5f;
     public float motorForce = 1500f;
     public float brakeForce = 3000f;
-    public float accelerationLerpSpeed = 5f;
-    public float steeringLerpSpeed = 0.5f;
     public float maxSpeed = 120f;
 
     [Header("Wheel Transforms")]
@@ -44,21 +42,11 @@ public class CarController : MonoBehaviour
     private float verticalInput;
     private bool isBreaking;
     private float currentSteerAngle;
-    private float currentBrakeForce;
     private float currentMotorTorque;
-    private float currentCarSpeed;
 
     private Vector3 previousVelocity;
 
-    public enum DriveType
-    {
-        FWD,
-        RWD,
-        AWD
-    }
-
     [Header("Drive Type")]
-    public DriveType driveType = DriveType.FWD;
     public bool canReverse = false;
 
     void Start()
@@ -69,7 +57,7 @@ public class CarController : MonoBehaviour
 
     void FixedUpdate()
     {
-        HandleInput(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        // HandleInput(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         HandleMotor();
         HandleSteering();
         HandleBraking();
@@ -78,7 +66,7 @@ public class CarController : MonoBehaviour
         DisplayAcceleration();
     }
 
-    private void HandleInput(float steering, float acceleration)
+    public void HandleInput(float steering, float acceleration)
     {
         horizontalInput = steering;
         verticalInput = acceleration;
@@ -91,27 +79,20 @@ public class CarController : MonoBehaviour
 
     private void HandleMotor()
     {
-        // if (rb.linearVelocity.magnitude * 3.6f > maxSpeed)
-        // {
-        //     verticalInput = 0;
-        // }
-        if (Vector3.Dot(rb.linearVelocity, transform.forward) < maxSpeed / 3.6f)
-        {
-            currentMotorTorque = verticalInput * motorForce;
-        } 
-        else 
-        {
-            currentMotorTorque = 0;
-        }
+        float forwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
+        float speedRatio = forwardSpeed / (maxSpeed / 3.6f);
+        speedRatio = Mathf.Clamp01(speedRatio);
+
+        currentMotorTorque = verticalInput * motorForce * (1 - speedRatio);
+
         frontLeftWheelCollider.motorTorque = currentMotorTorque;
         frontRightWheelCollider.motorTorque = currentMotorTorque;
-    }   
+        rearLeftWheelCollider.motorTorque = 0;
+        rearRightWheelCollider.motorTorque = 0;
+    } 
 
     private void HandleSteering()
     {
-        // float targetSteerAngle = maxSteerAngle * horizontalInput;
-        // frontLeftWheelCollider.steerAngle = Mathf.Lerp(frontLeftWheelCollider.steerAngle, targetSteerAngle, Time.fixedDeltaTime * steeringSpeed);
-        // frontRightWheelCollider.steerAngle = Mathf.Lerp(frontRightWheelCollider.steerAngle, targetSteerAngle, Time.fixedDeltaTime * steeringSpeed);
         currentSteerAngle = maxSteerAngle * horizontalInput;
         frontLeftWheelCollider.steerAngle = currentSteerAngle;
         frontRightWheelCollider.steerAngle = currentSteerAngle;
@@ -120,7 +101,7 @@ public class CarController : MonoBehaviour
 
     private void HandleBraking()
     {
-        float brakingForce = isBreaking ? brakeForce : 0f;
+        float brakingForce = isBreaking ? brakeForce : 0f;  
         frontLeftWheelCollider.brakeTorque = brakingForce;
         frontRightWheelCollider.brakeTorque = brakingForce;
         rearLeftWheelCollider.brakeTorque = brakingForce;
@@ -169,5 +150,18 @@ public class CarController : MonoBehaviour
         float accelerationInG = acceleration.magnitude / 9.81f;
         accelerationText.text = accelerationInG.ToString("F2");
         previousVelocity = currentVelocity;
+    }
+
+    public Vector3 GetVelocity()
+    {
+        return rb.linearVelocity / 3.6f;
+    }
+
+    public void ResetCar(Vector3 position)
+    {
+        transform.SetPositionAndRotation(position, Quaternion.identity);
+        
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 }

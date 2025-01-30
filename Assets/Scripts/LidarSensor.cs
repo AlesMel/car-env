@@ -28,6 +28,8 @@ public class LidarSensor : MonoBehaviour
     private List<LidarRay> lidarRays;
     private float[] distances;
     private HashSet<string> tagSet;
+    public bool returnNormalized = true;
+    public bool debugLogs = false;
 
     private void OnValidate()
     {
@@ -73,16 +75,22 @@ public class LidarSensor : MonoBehaviour
             Vector3 dir = rotation * lidarRays[i].localDirection;
             if (Physics.Raycast(origin, dir, out RaycastHit hit, maxDistance))
             {
-                if (tagSet.Contains(hit.collider.tag)) distances[i] = hit.distance;
+                if (tagSet.Contains(hit.collider.tag)) 
+                {
+                    distances[i] = hit.distance;
+                    if (returnNormalized) distances[i] /= maxDistance;
+                }
                 else distances[i] = -1f;
             }
             else distances[i] = -1f;
         }
-
-        // for(int i = 0; i < distances.Length; i++)
-        // {
-        //     Debug.Log("Distance " + i + ": " + distances[i]);
-        // }
+        if (debugLogs)
+        {
+            for (int i = 0; i < distances.Length; i++)
+            {
+                Debug.Log($"Distance {i}: {distances[i]}");
+            }
+        }
     }
 
     private void OnDrawGizmos()
@@ -96,6 +104,7 @@ public class LidarSensor : MonoBehaviour
         for (int i = 0; i < lidarRays.Count; i++)
         {
             float distance = distances[i];
+            if (returnNormalized) distance *= maxDistance;
             Vector3 dir = rotation * lidarRays[i].localDirection;
             if (distance > 0f)
             {

@@ -933,8 +933,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxDistance: 15
-  pitchFOV: 0
-  yawFOV: 180
+  verticalFOV: 0
+  horizontalFOV: 47
   verticalStep: 1
   horizontalStep: 20
   drawLines: 1
@@ -944,6 +944,8 @@ MonoBehaviour:
   farColor: {r: 0, g: 1, b: 0, a: 1}
   tagsToDetect:
   - Obstacle
+  returnNormalized: 1
+  debugLogs: 0
 --- !u!4 &1866534074
 Transform:
   m_ObjectHideFlags: 0
@@ -953,7 +955,7 @@ Transform:
   m_GameObject: {fileID: 1866534070}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.36, y: -5.21, z: -21.85}
+  m_LocalPosition: {x: -28.54, y: 2.17, z: -20.96}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
