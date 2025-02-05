@@ -133,7 +133,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 39837211}
-  - component: {fileID: 39837212}
   m_Layer: 0
   m_Name: Sensor
   m_TagString: Untagged
@@ -149,39 +148,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 39837210}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.568, z: 2.515}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.8, z: 2.639}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1312308223}
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &39837212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 39837210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0975a891de3f1e4b9ca3b4400a6aeb5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxDistance: 10
-  verticalFOV: 0
-  horizontalFOV: 78
-  verticalStep: 20
-  horizontalStep: 12
-  drawLines: 1
-  drawSpheres: 1
-  sphereRadius: 0.1
-  nearColor: {r: 1, g: 0, b: 0, a: 1}
-  farColor: {r: 0, g: 1, b: 0, a: 1}
-  tagsToDetect:
-  - Obstacle
-  returnNormalized: 1
-  debugLogs: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &97293098
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -493,6 +466,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1312308237}
+    - targetCorrespondingSourceObject: {fileID: 642287924342879162, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1312308241}
   m_SourcePrefab: {fileID: 100100000, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
 --- !u!4 &146788331 stripped
 Transform:
@@ -2269,7 +2245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 17
+    VectorObservationSize: 4
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -2317,9 +2293,34 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 100
-  lidar: {fileID: 39837212}
+  MaxStep: 1000
   carController: {fileID: 1312308230}
+  goalTransform: {fileID: 2078634570}
+--- !u!114 &1312308241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347494121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0975a891de3f1e4b9ca3b4400a6aeb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxDistance: 100
+  verticalFOV: 0
+  horizontalFOV: 10
+  verticalStep: 1
+  horizontalStep: 10
+  drawLines: 1
+  drawSpheres: 1
+  sphereRadius: 0.1
+  nearColor: {r: 1, g: 0, b: 0, a: 1}
+  farColor: {r: 0, g: 1, b: 0, a: 1}
+  tagsToDetect: []
+  returnNormalized: 1
+  debugLogs: 0
 --- !u!1001 &1357148565
 PrefabInstance:
   m_ObjectHideFlags: 0

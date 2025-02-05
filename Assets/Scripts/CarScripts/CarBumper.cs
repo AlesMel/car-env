@@ -21,25 +21,4 @@ public class CarBumper : MonoBehaviour
     {
 
     }
-
-    private void OnTriggerEnter(Collider collision)
-    {
-        if (collision.CompareTag("Goal"))
-        {
-            Debug.Log("Goal reached!");
-        }
-        else
-        {
-            Debug.Log("Obstacle hit!");
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.CompareTag("Obstacle"))
-        {
-            Debug.Log("Obstacle hit!");
-            manager.GameOver();
-        }
-    }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
+// [ExecuteInEditMode]
 public class LidarSensor : MonoBehaviour
 {
     public float maxDistance = 100f;
@@ -38,10 +38,12 @@ public class LidarSensor : MonoBehaviour
         RebuildRays();
     }
 
-    private void Awake()
+    private void Start()
     {
         RebuildRays();
+        DoRaycasts();
     }
+
 
     private void RebuildRays()
     {
@@ -60,14 +62,13 @@ public class LidarSensor : MonoBehaviour
         distances = new float[lidarRays.Count];
     }
 
-    private void FixedUpdate()
+    public void DoRaycasts()
     {
-        if (!Application.isPlaying) return;
-        DoRaycasts();
-    }
-
-    private void DoRaycasts()
-    {
+        // if (lidarRays == null || distances == null)
+        // {
+        //     Debug.LogError("Lidar rays or distances not initialized!");
+        //     RebuildRays();
+        // }   
         Vector3 origin = transform.position;
         Quaternion rotation = transform.rotation;
         for (int i = 0; i < lidarRays.Count; i++)
@@ -75,7 +76,7 @@ public class LidarSensor : MonoBehaviour
             Vector3 dir = rotation * lidarRays[i].localDirection;
             if (Physics.Raycast(origin, dir, out RaycastHit hit, maxDistance))
             {
-                if (tagSet.Contains(hit.collider.tag)) 
+                if (hit.collider != null && tagSet.Contains(hit.collider.tag)) 
                 {
                     distances[i] = hit.distance;
                     if (returnNormalized) distances[i] /= maxDistance;
@@ -84,7 +85,7 @@ public class LidarSensor : MonoBehaviour
             }
             else distances[i] = -1f;
         }
-        if (debugLogs)
+        if (debugLogs && Application.isPlaying)
         {
             for (int i = 0; i < distances.Length; i++)
             {
@@ -93,7 +94,7 @@ public class LidarSensor : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         if (lidarRays == null || distances == null) RebuildRays();
         if (!Application.isPlaying) DoRaycasts();

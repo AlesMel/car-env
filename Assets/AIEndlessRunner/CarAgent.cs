@@ -6,15 +6,19 @@ using UnityEngine.UIElements;
 
 public class CarAgent : Agent
 {
+    private LidarSensor lidarSensor;
 
-    public LidarSensor lidar;
     public CarController carController;
+    public Transform goalTransform;  // Reference to Goal in Unity Editor
+
     private Vector3 defaultPosition;
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private float startDistance;
+
     void Start()
     {
         defaultPosition = carController.transform.position;
+        startDistance = Vector3.Distance(defaultPosition, goalTransform.position);
+        lidarSensor = GetComponent<LidarSensor>();
     }
 
     public override void OnEpisodeBegin()
@@ -24,32 +28,40 @@ public class CarAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        float[] lidarReadings = lidar.GetDistances();
         Vector3 carVelocity = carController.GetVelocity();
-        sensor.AddObservation(lidarReadings);
+        float distanceToGoal = Vector3.Distance(carController.transform.position, goalTransform.position);
+        lidarSensor.DoRaycasts();
         sensor.AddObservation(carVelocity);
-        // for (int i = 0; i < lidarReadings.Length; i++)
-        // {
-        //     Debug.Log(lidarReadings[i]);
-        // }
-        // Debug.Log("Velocity: " + carVelocity);
+        sensor.AddObservation(distanceToGoal);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        Debug.Log("Action received" + actions.ContinuousActions[0] + " " + actions.ContinuousActions[1]);
         carController.HandleInput(actions.ContinuousActions[0], actions.ContinuousActions[1]);
+
+
+        Vector3 goalDirection = (goalTransform.position - defaultPosition).normalized;
+        float progress = Vector3.Dot(transform.position - defaultPosition, goalDirection);
+        float totalDistance = Vector3.Distance(defaultPosition, goalTransform.position);
+        float distanceReward = Mathf.Clamp01(progress / totalDistance);
+
     }
 
-    public void AddRewards()
+    private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Reward added");
+        if (collision.collider.CompareTag("Obstacle"))
+        {
+            AddReward(-1.0f);
+            EndEpisode();
+        }
     }
 
-    public override void Heuristic(in ActionBuffers actionsOut)
+    private void OnTriggerEnter(Collider collision)
     {
-        var continuousActionsOut = actionsOut.ContinuousActions;
-        continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        continuousActionsOut[1] = Input.GetAxis("Vertical");
+        if (collision.CompareTag("Goal"))
+        {
+            AddReward(2.0f);
+            EndEpisode();
+        }
     }
 }
